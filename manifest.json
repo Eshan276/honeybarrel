@@ -1,0 +1,56 @@
+{
+  "manifest_version": 3,
+  "name": "The Honey Barrel",
+  "version": "1.0.0",
+  "description": "Find better deals on whisky and wine bottles by comparing retail sites with BAXUS marketplace.",
+  "permissions": ["activeTab", "storage", "scripting"],
+  "host_permissions": [
+    "https://services.baxus.co/*",
+    "https://*.totalwine.com/*",
+    "https://*.winelibrary.com/*",
+    "https://*.whiskyshop.com/*",
+    "https://*.wine.com/*",
+    "https://*.thewhiskyexchange.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "web_accessible_resources": [
+  {
+    "resources": [
+      "content/content_main.js",
+      "content/sites/*.js",
+      "utils/normalizer.js"
+    ],
+    "matches": ["<all_urls>"]
+  }
+],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.totalwine.com/*/p/*",
+        "https://*.winelibrary.com/all/*",
+        "https://*.whiskyshop.com/*/p/*",
+        "https://*.wine.com/product/*",
+        "https://*.thewhiskyexchange.com/p/*"
+      ],
+      "js": ["content/content_loader.js"]
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

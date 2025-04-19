@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Honey Barrel</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <img src="../icons/icon48.png" alt="The Honey Barrel">
+        <h1>The Honey Barrel</h1>
+      </div>
+      <div class="actions">
+        <button id="refresh-button" title="Refresh BAXUS listings">
+          <span class="icon">↻</span>
+        </button>
+      </div>
+    </header>
+    
+    <!-- Loading State -->
+    <div id="loading-state" class="state">
+      <div class="spinner"></div>
+      <p>Looking for better deals...</p>
+    </div>
+    
+    <!-- No Bottle Detected State -->
+    <div id="no-bottle-state" class="state">
+      <div class="message">
+        <p>No whisky or wine bottle detected on this page.</p>
+        <p class="hint">Visit a supported retailer to find better deals.</p>
+        <div class="supported-sites">
+          <p>Supported sites:</p>
+          <ul>
+            <li>TotalWine.com</li>
+            <li>WhiskyShop.com</li>
+            <li>WineLibrary.com</li>
+            <li>Wine.com</li>
+            <li>TheWhiskyExchange.com</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Error State -->
+    <div id="error-state" class="state">
+      <div class="message error">
+        <p id="error-message">Something went wrong.</p>
+        <button id="try-again-button" class="text-button">Try Again</button>
+      </div>
+    </div>
+    
+    <!-- Bottle Detected State -->
+    <div id="bottle-detected-state" class="state">
+      <div class="current-bottle">
+        <h2>Currently Viewing</h2>
+        <div class="bottle-info">
+          <div class="bottle-name" id="current-bottle-name"></div>
+          <div class="bottle-details">
+            <span class="bottle-price" id="current-bottle-price"></span>
+            <span class="bottle-vintage" id="current-bottle-vintage"></span>
+            <span class="bottle-volume" id="current-bottle-volume"></span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Matches Section -->
+      <div class="matches-section">
+        <h2>BAXUS Marketplace Matches</h2>
+        
+        <!-- No Matches State -->
+        <div id="no-matches-state" class="hidden">
+          <p>No matches found on BAXUS marketplace.</p>
+        </div>
+        
+        <!-- Matches List -->
+        <div id="matches-list"></div>
+      </div>
+      
+      <div class="footer">
+        <a href="https://baxus.co/marketplace" target="_blank" class="browse-button">
+          Browse All Bottles on BAXUS
+        </a>
+        <div class="last-updated" id="last-updated"></div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Match Item Template -->
+  <template id="match-template">
+    <div class="match-item">
+      <div class="match-content">
+        <div class="match-image">
+          <img src="" alt="Bottle Image">
+        </div>
+        <div class="match-details">
+          <div class="match-name"></div>
+          <div class="match-info">
+            <span class="match-vintage"></span>
+            <span class="match-volume"></span>
+          </div>
+          <div class="match-price"></div>
+          <div class="price-comparison">
+            <span class="savings"></span>
+            <span class="savings-percentage"></span>
+          </div>
+        </div>
+      </div>
+      <div class="match-actions">
+        <a href="" target="_blank" class="view-button">View on BAXUS</a>
+      </div>
+    </div>
+  </template>
+  
+
+  <script type="module" src="popup.js"></script> 
+  <!-- <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      console.log("Popup has been opened.");
+    });
+  </script> -->
+</body>
+</html>

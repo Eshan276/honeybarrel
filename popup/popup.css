@@ -1,0 +1,403 @@
+/* 
+ * The Honey Barrel - Popup Styles
+ */
+
+:root {
+  --honey-color: #FFD700;
+  --honey-dark: #DAA520;
+  --honey-light: #FFF8DC;
+  --dark-brown: #654321;
+  --light-brown: #8B4513;
+  --text-color: #333;
+  --background-color: #FFFFFF;
+  --success-color: #4CAF50;
+  --error-color: #F44336;
+  --savings-color: #4CAF50;
+  --border-radius: 8px;
+  --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  width: 360px;
+  min-height: 360px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.container {
+  padding: 16px;
+}
+
+/* Header Styles */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo img {
+  width: 32px;
+  height: 32px;
+  margin-right: 8px;
+}
+
+.logo h1 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--dark-brown);
+}
+
+.actions button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--light-brown);
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.actions button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.icon {
+  display: inline-block;
+}
+
+/* State Containers */
+.state {
+  display: none;
+}
+
+.state.active {
+  display: block;
+}
+
+/* Loading State */
+.spinner {
+  width: 40px;
+  height: 40px;
+  margin: 24px auto;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: var(--honey-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+#loading-state p {
+  text-align: center;
+  color: var(--light-brown);
+  margin-bottom: 16px;
+}
+
+/* Message Styles */
+.message {
+  padding: 16px;
+  border-radius: var(--border-radius);
+  background-color: var(--honey-light);
+  margin: 16px 0;
+}
+
+.message p {
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.message p:last-child {
+  margin-bottom: 0;
+}
+
+.message.error {
+  background-color: #FFEBEE;
+  color: var(--error-color);
+}
+
+.hint {
+  font-size: 14px;
+  color: var(--light-brown);
+  font-style: italic;
+}
+
+.supported-sites {
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+.supported-sites ul {
+  margin-top: 8px;
+  list-style-type: none;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+}
+
+.supported-sites li {
+  padding: 2px 0;
+}
+
+/* Bottle Detected Styles */
+.current-bottle {
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--dark-brown);
+}
+
+.bottle-info {
+  padding: 12px;
+  border-radius: var(--border-radius);
+  background-color: var(--honey-light);
+  box-shadow: var(--box-shadow);
+}
+
+.bottle-name {
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+
+.bottle-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.bottle-price {
+  font-weight: 600;
+}
+
+.bottle-vintage, .bottle-volume {
+  color: #666;
+}
+
+/* Matches Section */
+.matches-section {
+  margin-bottom: 16px;
+}
+
+#no-matches-state {
+  padding: 16px;
+  text-align: center;
+  color: #666;
+  background-color: #f9f9f9;
+  border-radius: var(--border-radius);
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Matches List */
+#matches-list {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+}
+
+.match-item {
+  border-radius: var(--border-radius);
+  background-color: #fff;
+  box-shadow: var(--box-shadow);
+  margin-bottom: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.match-content {
+  display: flex;
+  padding: 12px;
+}
+
+.match-image {
+  width: 60px;
+  height: 80px;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.match-image img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.match-details {
+  flex: 1;
+}
+
+.match-name {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.match-info {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 6px;
+}
+
+.match-price {
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.price-comparison {
+  font-size: 13px;
+}
+
+.savings {
+  color: var(--savings-color);
+  font-weight: 600;
+}
+
+.savings-percentage {
+  margin-left: 4px;
+  font-size: 12px;
+  background-color: rgba(76, 175, 80, 0.1);
+  padding: 2px 4px;
+  border-radius: 4px;
+  color: var(--savings-color);
+}
+
+.match-actions {
+  padding: 8px 12px;
+  background-color: #f5f5f5;
+  text-align: right;
+}
+
+.view-button {
+  display: inline-block;
+  padding: 6px 12px;
+  background-color: var(--honey-color);
+  color: var(--dark-brown);
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.view-button:hover {
+  background-color: var(--honey-dark);
+}
+
+/* Footer */
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.browse-button {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  background-color: var(--honey-color);
+  color: var(--dark-brown);
+  text-decoration: none;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  text-align: center;
+  transition: background-color 0.2s;
+}
+
+.browse-button:hover {
+  background-color: var(--honey-dark);
+}
+
+.last-updated {
+  font-size: 12px;
+  color: #999;
+  text-align: center;
+}
+
+/* Button Styles */
+.text-button {
+  background: none;
+  border: none;
+  color: var(--honey-dark);
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.text-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Better Deal Indicator */
+.better-deal {
+  position: relative;
+}
+
+.better-deal::before {
+  content: '🍯 Better Deal!';
+  position: absolute;
+  top: -8px;
+  right: 12px;
+  background-color: var(--honey-color);
+  color: var(--dark-brown);
+  font-size: 12px;
+  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #bbb;
+}
