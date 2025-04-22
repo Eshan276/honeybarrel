@@ -1,18 +1,95 @@
 /**
- * Content Script - The Honey Barrel
+ * Content Script - The Honey Barrel (Non-Module Version)
  *
  * Runs on supported retail websites to scrape bottle information
  * and communicate with the background service
  */
 console.log("Honey Barrel: Content script loaded");
-import { extractVintageFromName } from "../utils/normalizer.js";
 
-// Site scraper modules
-import { TotalWineScraper } from "./sites/totalwine.js";
-import { WhiskyShopScraper } from "./sites/whiskyshop.js";
-import { WineLibraryScraper } from "./sites/winelibrary.js";
-import { WineComScraper } from "./sites/winecom.js";
-import { WhiskyExchangeScraper } from "./sites/whiskyexchange.js";
+// Define all our functions and classes in the global scope directly
+// No conditional checks that might prevent global declaration
+
+// Utility function
+function extractVintageFromName(name) {
+  // Simplified implementation
+  const match = /\b(19|20)\d{2}\b/.exec(name);
+  return match ? parseInt(match[0]) : null;
+}
+
+// Define all scraper classes directly in the global scope
+class TotalWineScraper {
+  isProductPage() {
+    // Implementation for Total Wine
+    return window.location.pathname.includes("/p/");
+  }
+
+  async scrape() {
+    // Implementation
+    console.log("Scraping Total Wine page");
+    // Return actual data
+    return {
+      name: document
+        .querySelector(
+          "h1.productTitle__28e21c67[data-at='product-name-title']"
+        )
+        ?.textContent?.trim(),
+      price: document
+        .querySelector("span[data-at='product-mix6price-text']")
+        ?.textContent?.trim(),
+      // Other properties...
+    };
+  }
+}
+
+class WhiskyShopScraper {
+  isProductPage() {
+    return window.location.pathname.includes("/products/");
+  }
+  async scrape() {
+    return {
+      name: document.querySelector(".product-title")?.textContent?.trim(),
+      price: document.querySelector(".price")?.textContent?.trim(),
+    };
+  }
+}
+
+class WineLibraryScraper {
+  isProductPage() {
+    return window.location.pathname.includes("/products/");
+  }
+  async scrape() {
+    return {
+      name: document.querySelector(".product__title")?.textContent?.trim(),
+      price: document.querySelector(".product__price")?.textContent?.trim(),
+    };
+  }
+}
+
+class WineComScraper {
+  isProductPage() {
+    return window.location.pathname.includes("/product/");
+  }
+  async scrape() {
+    return {
+      name: document.querySelector(".pipName")?.textContent?.trim(),
+      price: document.querySelector(".pipPriceAmount")?.textContent?.trim(),
+    };
+  }
+}
+
+class WhiskyExchangeScraper {
+  isProductPage() {
+    return window.location.pathname.includes("/p/");
+  }
+  async scrape() {
+    return {
+      name: document.querySelector(".product-main__name")?.textContent?.trim(),
+      price: document
+        .querySelector(".product-action__price")
+        ?.textContent?.trim(),
+    };
+  }
+}
 
 // Map of site scrapers by domain
 const SCRAPERS = {
@@ -25,12 +102,14 @@ const SCRAPERS = {
 
 // Main initialization function
 function init() {
-  // addPopupTrigger();
   console.log("Honey Barrel: Content script initialized");
 
   // Determine which scraper to use based on current domain
   const currentDomain = getCurrentDomain();
+  console.log("Current domain:", currentDomain);
+
   const Scraper = getScraper(currentDomain);
+  console.log("Selected scraper:", Scraper ? Scraper.name : "None");
 
   if (!Scraper) {
     console.log(`Honey Barrel: No scraper available for ${currentDomain}`);
@@ -93,6 +172,7 @@ function init() {
     }
   });
 }
+
 function addPopupTrigger() {
   const btn = document.createElement("button");
   btn.innerText = "🔍 Compare Price";
