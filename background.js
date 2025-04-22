@@ -402,7 +402,7 @@ function notifyContentScript(matches) {
         payload: {
           count: matches.length,
           hasBetterPrice: matches.some(
-            (match) => match.listing.price < state.currentBottle.price
+            (match) => match._source.price < state.currentBottle.price
           ),
         },
       });
