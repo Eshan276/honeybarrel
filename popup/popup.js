@@ -151,54 +151,61 @@ function populateCurrentBottleInfo() {
 function populateMatches() {
   matchesList.innerHTML = "";
   const matches = appState.matches || [];
-
   if (matches.length === 0) {
     noMatchesState.classList.remove("hidden");
     return;
   }
-
   noMatchesState.classList.add("hidden");
   const template = document.getElementById("match-template");
+  console.log("Honey Barrel: Populating matches", matches);
+
+  // Sort matches by price
   const sortedMatches = [...matches].sort(
-    (a, b) => a.listing.price - b.listing.price
+    (a, b) => a._source.price - b._source.price
   );
+
   const currentPrice = appState.currentBottle?.price || 0;
 
   sortedMatches.forEach((match, index) => {
-    const { listing } = match;
+    // Note: No need to destructure since match is directly the listing
     const matchElement = template.content.cloneNode(true);
 
-    matchElement.querySelector(".match-name").textContent = listing.name;
+    // Update all references from listing._source to match._source
+    matchElement.querySelector(".match-name").textContent = match._source.name;
+
     matchElement.querySelector(".match-price").textContent = formatPrice(
-      listing.price
+      match._source.price
     );
 
     const vintageElement = matchElement.querySelector(".match-vintage");
-    vintageElement.textContent = listing.vintage || "";
+    vintageElement.textContent = match._source.attributes.vintage || "";
 
     const volumeElement = matchElement.querySelector(".match-volume");
-    volumeElement.textContent = formatVolume(listing.volume || "");
+    volumeElement.textContent = formatVolume(
+      match._source.attributes.Size || "700ml"
+    );
 
     const imageElement = matchElement.querySelector(".match-image img");
-    if (listing.imageUrl) {
-      imageElement.src = listing.imageUrl;
-      imageElement.alt = listing.name;
+    if (match._source.imageUrl) {
+      imageElement.src = match._source.imageUrl;
+      imageElement.alt = match._source.name;
     } else {
       imageElement.src = "../assets/bottle-placeholder.png";
       imageElement.alt = "Bottle Image";
     }
 
-    matchElement.querySelector(".view-button").href = listing.url;
+    matchElement.querySelector(
+      ".view-button"
+    ).href = `https://baxus.co/asset/${match._id}`||match._source.animationUrl || "#";
 
     const savingsElement = matchElement.querySelector(".savings");
     const savingsPercentageElement = matchElement.querySelector(
       ".savings-percentage"
     );
 
-    if (currentPrice && listing.price < currentPrice) {
-      const savings = currentPrice - listing.price;
+    if (currentPrice && match._source.price < currentPrice) {
+      const savings = currentPrice - match._source.price;
       const savingsPercentage = (savings / currentPrice) * 100;
-
       savingsElement.textContent = `Save ${formatPrice(savings)}`;
       savingsPercentageElement.textContent = `${savingsPercentage.toFixed(
         0
@@ -207,10 +214,9 @@ function populateMatches() {
       if (index === 0) {
         matchElement.querySelector(".match-item").classList.add("better-deal");
       }
-    } else if (currentPrice && listing.price > currentPrice) {
-      const diff = listing.price - currentPrice;
+    } else if (currentPrice && match._source.price > currentPrice) {
+      const diff = match._source.price - currentPrice;
       const diffPercent = (diff / currentPrice) * 100;
-
       savingsElement.textContent = `${formatPrice(diff)} more`;
       savingsElement.style.color = "#666";
       savingsPercentageElement.textContent = `${diffPercent.toFixed(

@@ -1,7 +1,4 @@
-const fs = require("fs");
-const rawData = fs.readFileSync("data2.json", "utf-8");
-let listings = JSON.parse(rawData);
-function findMatches(bottleInfo, listings) {
+nfo, listings) {
   // Normalize the search term (remove extra spaces, make lowercase)
   const searchTerm = bottleInfo.toLowerCase().trim();
 
@@ -56,7 +53,3 @@ function findMatches(bottleInfo, listings) {
   // Return the top matches (adjust number as needed)
   return matches.slice(0, 5).map((item) => item.listing);
 }
-
-const bottleInfo = "Carlyle Blended Scotch Whisky";
-const matches = findMatches(bottleInfo, listings);
-console.log(matches);

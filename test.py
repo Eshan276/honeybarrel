@@ -2,7 +2,7 @@ import requests
 import json
 
 # URL to fetch data from
-url = "https://services.baxus.co/api/search/listings?from=0&size=10000"
+url = "https://services.baxus.co/api/search/listings?from=0&size=10000&listed=true"
 
 # Fetch the data
 response = requests.get(url)
@@ -13,7 +13,7 @@ if response.status_code == 200:
     data = response.json()
     
     # Save the data to a JSON file
-    with open("data.json", "w") as json_file:
+    with open("data2.json", "w") as json_file:
         json.dump(data, json_file, indent=4)
     print("Data saved to data.json")
 else:

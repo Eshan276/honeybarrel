@@ -4,6 +4,7 @@
  * Handles communication between content scripts and popup,
  * manages bottle data, and interacts with the BAXUS API
  */
+//const fs = require("fs");
 
 // State management for the extension
 const state = {
@@ -179,7 +180,19 @@ function parseVolumeToMl(volumeStr) {
       return null;
   }
 }
-
+function loadJsonData() {
+  return new Promise((resolve, reject) => {
+    fetch(chrome.runtime.getURL("data2.json"))
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Failed to load JSON: ${response.statusText}`);
+        }
+        return response.json();
+      })
+      .then((data) => resolve(data))
+      .catch((error) => reject(error));
+  });
+}
 // Find matches for a bottle
 async function findBottleMatches(bottleInfo) {
   if (!bottleInfo) return [];
@@ -189,10 +202,13 @@ async function findBottleMatches(bottleInfo) {
 
   try {
     // Get fresh listings if needed
-    const listings = await getAllListings();
-
+    //const listings = await getAllListings();
+    // const rawData = fs.readFileSync("data.json", "utf-8");
+    // let listings = JSON.parse(rawData);
+    const listings = await loadJsonData();
     // Find matches using simple matching algorithm
-    const matches = findMatches(bottleInfo, listings);
+    //const matches = findMatches(bottleInfo, listings);
+    const matches = findMatchesV2(bottleInfo, listings);
     state.matches = matches;
 
     console.log(
@@ -272,7 +288,7 @@ function findMatches(scrapedBottle, baxusListings) {
 }
 function findMatchesV2(bottleInfo, listings) {
   // Normalize the search term (remove extra spaces, make lowercase)
-  const searchTerm = bottleInfo.toLowerCase().trim();
+  const searchTerm = bottleInfo.name.toLowerCase().trim();
 
   // Break the search term into keywords
   const keywords = searchTerm.split(/\s+/).filter((word) => word.length > 2);
