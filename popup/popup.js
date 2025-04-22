@@ -117,6 +117,7 @@ function showNoBottleState() {
 }
 
 function showBottleDetectedState() {
+  console.log("Honey Barrel: Showing bottle detected state", appState.currentBottle);
   bottleDetectedState.classList.add("active");
   populateCurrentBottleInfo();
   populateMatches();
@@ -125,7 +126,7 @@ function showBottleDetectedState() {
 function populateCurrentBottleInfo() {
   const bottle = appState.currentBottle;
   if (!bottle) return;
-
+  console.log("Honey Barrel: Populating current bottle info####################", bottle);
   currentBottleName.textContent = bottle.name;
 
   currentBottlePrice.textContent = bottle.price
@@ -230,6 +231,12 @@ function populateMatches() {
 // Format helpers
 function formatPrice(price, currency = "USD") {
   if (price === undefined || price === null) return "";
+
+  // Convert string price like "$4.97" to number 4.97
+  if (typeof price === "string") {
+    price = parseFloat(price.replace(/[^0-9.-]+/g, ""));
+  }
+
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: currency,

@@ -15,7 +15,51 @@ function extractVintageFromName(name) {
   const match = /\b(19|20)\d{2}\b/.exec(name);
   return match ? parseInt(match[0]) : null;
 }
+function extractPrice() {
+  // Try multiple potential selectors for price elements
+  const priceSelectors = [
+    ".priceTxt__\\w+", // Using regex pattern to match dynamically generated class
+    "#edlpPrice", // Using the ID which might be more stable
+    ".priceContainer__\\w+ .priceTxt__\\w+", // Nested approach
+    "[class^='priceTxt__']", // Starts with selector
+  ];
 
+  let price = null;
+
+  // Try each selector until we find a match
+  for (const selector of priceSelectors) {
+    let elements;
+
+    // Handle regex-based selectors
+    if (selector.includes("\\w+")) {
+      const pattern = new RegExp(selector.replace("\\w+", "\\w+"));
+      elements = Array.from(document.querySelectorAll("[class]")).filter((el) =>
+        Array.from(el.classList).some((cls) => pattern.test(cls))
+      );
+    } else {
+      elements = document.querySelectorAll(selector);
+    }
+
+    if (elements.length > 0) {
+      // Get text content and extract just the price
+      const text = elements[0].textContent.trim();
+      // Extract dollar amount using regex
+      const priceMatch = text.match(/\$(\d+\.\d+)/);
+      if (priceMatch) {
+        price = priceMatch[1]; // Get just the number without $
+        console.log(`Found price: $${price} using selector: ${selector}`);
+        return `$${price}`;
+      }
+    }
+  }
+
+  console.log("Price not found with any selector");
+  return null;
+}
+
+// Run the function
+// const price = extractPrice();
+// console.log("Extracted price:", price);
 // Define all scraper classes directly in the global scope
 class TotalWineScraper {
   isProductPage() {
@@ -24,18 +68,25 @@ class TotalWineScraper {
   }
 
   async scrape() {
-    // Implementation
     console.log("Scraping Total Wine page");
-    // Return actual data
+    const name = document
+      .querySelector("h1.productTitle__28e21c67[data-at='product-name-title']")
+      ?.textContent?.trim();
+
+    let price = document
+      .querySelector("span[data-at='product-mix6price-text']")
+      ?.textContent?.trim();
+
+    // Fallback to another selector if price is null
+    if (!price) {
+      // price = document.querySelector(".priceTxt__")?.textContent?.trim();
+      // print(document.querySelector(".priceTxt__"));
+      price= extractPrice();
+    }
+
     return {
-      name: document
-        .querySelector(
-          "h1.productTitle__28e21c67[data-at='product-name-title']"
-        )
-        ?.textContent?.trim(),
-      price: document
-        .querySelector("span[data-at='product-mix6price-text']")
-        ?.textContent?.trim(),
+      name,
+      price,
       // Other properties...
     };
   }
