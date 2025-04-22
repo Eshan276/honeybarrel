@@ -30,7 +30,8 @@
     "resources": [
       "content/content_main.js",
       "content/sites/*.js",
-      "utils/normalizer.js"
+      "utils/normalizer.js",
+      "content/bridge.js"
     ],
     "matches": ["<all_urls>"]
   }

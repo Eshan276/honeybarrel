@@ -104,6 +104,15 @@ const SCRAPERS = {
 function init() {
   console.log("Honey Barrel: Content script initialized");
 
+  // Check if bridge is available
+  if (!window.honeyBarrelBridge) {
+    console.error(
+      "Honey Barrel: Bridge not found. Communication with extension won't work."
+    );
+  } else {
+    console.log("Honey Barrel: Bridge found, communication ready");
+  }
+
   // Determine which scraper to use based on current domain
   const currentDomain = getCurrentDomain();
   console.log("Current domain:", currentDomain);
@@ -143,32 +152,49 @@ function init() {
       // Enhance bottle information
       const enhancedInfo = enhanceBottleInfo(bottleInfo);
 
-      // Send to background script
-      chrome.runtime.sendMessage({
-        action: "BOTTLE_DETECTED",
-        payload: {
-          bottleInfo: enhancedInfo,
-          source: {
-            url: window.location.href,
-            domain: currentDomain,
-            title: document.title,
-          },
-        },
-      });
-
-      // Listen for badge updates
-      chrome.runtime.onMessage.addListener((message) => {
-        if (message.action === "MATCHES_FOUND") {
-          // Update the extension icon badge with number of matches
-          const matchCount = message.payload.count;
-          if (matchCount > 0) {
-            // Optionally, we could show a notification or overlay on the page
-            console.log(`Honey Barrel: ${matchCount} matches found`);
-          }
-        }
-      });
+      // Send to background script via bridge
+      if (window.honeyBarrelBridge) {
+        window.honeyBarrelBridge
+          .sendMessage({
+            action: "BOTTLE_DETECTED",
+            payload: {
+              bottleInfo: enhancedInfo,
+              source: {
+                url: window.location.href,
+                domain: currentDomain,
+                title: document.title,
+              },
+            },
+          })
+          .then((response) => {
+            console.log("Honey Barrel: Message sent, response:", response);
+          })
+          .catch((err) => {
+            console.error("Honey Barrel: Error sending message:", err);
+          });
+      } else {
+        console.error(
+          "Honey Barrel: Bridge not available for sending messages"
+        );
+      }
     } catch (error) {
       console.error("Honey Barrel: Error scraping bottle info", error);
+    }
+  });
+
+  // Set up listener for extension messages
+  window.addEventListener("message", function (event) {
+    // Only accept messages from the same window
+    if (event.source !== window) return;
+
+    // Check if it's a message from the extension
+    if (event.data.type && event.data.type === "FROM_EXTENSION_TO_PAGE") {
+      if (event.data.message && event.data.message.action === "MATCHES_FOUND") {
+        const matchCount = event.data.message.payload.count;
+        if (matchCount > 0) {
+          console.log(`Honey Barrel: ${matchCount} matches found`);
+        }
+      }
     }
   });
 }
@@ -188,17 +214,25 @@ function addPopupTrigger() {
   btn.style.cursor = "pointer";
   btn.style.fontSize = "14px";
   btn.onclick = async () => {
-    const scraper = new SCRAPERS[getCurrentDomain()]();
-    const bottleInfo = await scraper.scrape();
-    if (!bottleInfo) return alert("Could not scrape this page.");
+    try {
+      const scraper = new SCRAPERS[getCurrentDomain()]();
+      const bottleInfo = await scraper.scrape();
+      if (!bottleInfo) return alert("Could not scrape this page.");
 
-    const enhanced = enhanceBottleInfo(bottleInfo);
+      const enhanced = enhanceBottleInfo(bottleInfo);
 
-    // Send to background to fetch Bauxes match
-    chrome.runtime.sendMessage({
-      action: "MATCH_WITH_BAUXES",
-      payload: enhanced,
-    });
+      // Send to background via bridge
+      if (window.honeyBarrelBridge) {
+        window.honeyBarrelBridge.sendMessage({
+          action: "MATCH_WITH_BAUXES",
+          payload: enhanced,
+        });
+      } else {
+        alert("Communication bridge not available");
+      }
+    } catch (err) {
+      console.error("Error in popup trigger:", err);
+    }
   };
   document.body.appendChild(btn);
 }
