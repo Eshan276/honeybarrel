@@ -37,14 +37,9 @@
 ],
   "content_scripts": [
     {
-      "matches": [
-        "https://*.totalwine.com/*/p/*",
-        "https://*.winelibrary.com/all/*",
-        "https://*.whiskyshop.com/*/p/*",
-        "https://*.wine.com/product/*",
-        "https://*.thewhiskyexchange.com/p/*"
-      ],
-      "js": ["content/content_loader.js"]
+      "matches": ["https://*.totalwine.com/*", "https://*.whiskyshop.com/*", "https://*.winelibrary.com/*", "https://*.wine.com/*", "https://*.thewhiskyexchange.com/*"],
+      "js": ["content/content_loader.js"],
+      "run_at": "document_start"
     }
   ],
   "icons": {

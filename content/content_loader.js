@@ -1,27 +1,33 @@
-console.log("📦 Content loader loaded");
+console.log("📦 Honey Barrel: Content loader loaded");
 
-(async () => {
+// Function to inject the module script once DOM is ready
+function injectModuleScript() {
   try {
-    const url = chrome.runtime.getURL("content/content_main.js");
-    console.log("🔗 Importing content_main.js from:", url);
+    // Create a module script element
+    const script = document.createElement("script");
+    script.type = "module";
+    script.src = chrome.runtime.getURL("content/content_main.js");
 
-    // Method 1: Using dynamic import
-    try {
-      const module = await import(url);
-      console.log("✅ Module imported successfully");
-      module.main();
-    } catch (importError) {
-      console.error("❌ Dynamic import failed:", importError);
+    // Add error handling
+    script.onerror = (error) => {
+      console.error("❌ Failed to load content_main.js module:", error);
+    };
 
-      // Method 2: Fallback to script injection if dynamic import fails
-      console.log("⚠️ Falling back to script injection method");
-      const script = document.createElement("script");
-      script.src = url;
-      script.onload = () => console.log("✅ Script loaded via injection");
-      script.onerror = (e) => console.error("❌ Script injection failed:", e);
-      document.head.appendChild(script);
-    }
+    // Append to document to start loading
+    console.log("🔄 Loading ES module:", script.src);
+    (document.head || document.documentElement).appendChild(script);
+    console.log("✅ Module script injected successfully");
   } catch (e) {
-    console.error("❌ Failed to load content_main.js:", e);
+    console.error("❌ Content loader error:", e);
   }
-})();
+}
+
+// Wait for the DOM to be ready, then inject the script
+if (document.readyState === "loading") {
+  // DOM still loading, wait for it
+  document.addEventListener("DOMContentLoaded", injectModuleScript);
+  console.log("⏳ Waiting for DOM to be ready...");
+} else {
+  // DOM already ready, inject immediately
+  injectModuleScript();
+}
