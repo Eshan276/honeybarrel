@@ -1,9 +1,4 @@
-/**
- * Content Script - The Honey Barrel (Non-Module Version)
- *
- * Runs on supported retail websites to scrape bottle information
- * and communicate with the background service
- */
+
 console.log("Honey Barrel: Content script loaded");
 
 // Define all our functions and classes in the global scope directly
@@ -61,95 +56,133 @@ function extractPrice() {
 // const price = extractPrice();
 // console.log("Extracted price:", price);
 // Define all scraper classes directly in the global scope
-class TotalWineScraper {
-  isProductPage() {
-    // Implementation for Total Wine
-    return window.location.pathname.includes("/p/");
-  }
-
-  async scrape() {
-    console.log("Scraping Total Wine page");
-    const name = document
-      .querySelector("h1.productTitle__28e21c67[data-at='product-name-title']")
-      ?.textContent?.trim();
-
-    let price = document
-      .querySelector("span[data-at='product-mix6price-text']")
-      ?.textContent?.trim();
-
-    // Fallback to another selector if price is null
-    if (!price) {
-      // price = document.querySelector(".priceTxt__")?.textContent?.trim();
-      // print(document.querySelector(".priceTxt__"));
-      price= extractPrice();
+if (!window.TotalWineScraper) {
+  class TotalWineScraper {
+    isProductPage() {
+      return window.location.pathname.includes("/p/");
     }
 
-    return {
-      name,
-      price,
-      // Other properties...
-    };
+    async scrape() {
+      console.log("Scraping Total Wine page");
+      const name = document
+        .querySelector(
+          "h1.productTitle__28e21c67[data-at='product-name-title']"
+        )
+        ?.textContent?.trim();
+
+      let price = document
+        .querySelector("span[data-at='product-mix6price-text']")
+        ?.textContent?.trim();
+
+      if (!price) {
+        price = extractPrice();
+      }
+
+      return {
+        name,
+        price,
+      };
+    }
   }
+
+  window.TotalWineScraper = TotalWineScraper; // Attach to the global object to prevent redeclaration
 }
 
-class WhiskyShopScraper {
-  isProductPage() {
-    return window.location.pathname.includes("/products/");
+
+
+if (!window.WhiskyShopScraper) {
+  class WhiskyShopScraper {
+    isProductPage() {
+      return true;
+    }
+
+    async scrape() {
+      const name = document
+        .querySelector("h1.page-title[itemprop='name']")
+        ?.textContent?.trim();
+
+      const price = document.querySelector("span.price")?.textContent?.trim();
+      console.log("Price found:", price);
+      console.log("Name found:", name);
+      return {
+        name,
+        price,
+      };
+    }
   }
-  async scrape() {
-    return {
-      name: document.querySelector(".product-title")?.textContent?.trim(),
-      price: document.querySelector(".price")?.textContent?.trim(),
-    };
-  }
+
+  window.WhiskyShopScraper = WhiskyShopScraper;
 }
 
-class WineLibraryScraper {
-  isProductPage() {
-    return window.location.pathname.includes("/products/");
+if (!window.WineLibraryScraper) {
+  class WineLibraryScraper {
+    isProductPage() {
+      return true; // Assuming all pages are product pages for simplicity
+    }
+
+    async scrape() {
+      return {
+        name: document
+          .querySelector("h1.product-pg-title[itemprop='name']")
+          ?.textContent?.trim(),
+        price: document
+          .querySelector("span[itemprop='price']")
+          ?.textContent?.trim(),
+      };
+    }
   }
-  async scrape() {
-    return {
-      name: document.querySelector(".product__title")?.textContent?.trim(),
-      price: document.querySelector(".product__price")?.textContent?.trim(),
-    };
-  }
+
+  window.WineLibraryScraper = WineLibraryScraper;
 }
 
-class WineComScraper {
-  isProductPage() {
-    return window.location.pathname.includes("/product/");
+if (!window.WineComScraper) {
+  class WineComScraper {
+    isProductPage() {
+      return window.location.pathname.includes("/product/");
+    }
+
+    async scrape() {
+      return {
+        name: document.querySelector(".pipName")?.textContent?.trim(),
+        price: document.querySelector(".pipPriceAmount")?.textContent?.trim(),
+      };
+    }
   }
-  async scrape() {
-    return {
-      name: document.querySelector(".pipName")?.textContent?.trim(),
-      price: document.querySelector(".pipPriceAmount")?.textContent?.trim(),
-    };
-  }
+
+  window.WineComScraper = WineComScraper;
 }
 
-class WhiskyExchangeScraper {
-  isProductPage() {
-    return window.location.pathname.includes("/p/");
+if (!window.WhiskyExchangeScraper) {
+  class WhiskyExchangeScraper {
+    isProductPage() {
+      return window.location.pathname.includes("/p/");
+    }
+
+    async scrape() {
+      return {
+        name: document
+          .querySelector(".product-main__name")
+          ?.textContent?.trim(),
+        price: document
+          .querySelector(".product-action__price")
+          ?.textContent?.trim(),
+      };
+    }
   }
-  async scrape() {
-    return {
-      name: document.querySelector(".product-main__name")?.textContent?.trim(),
-      price: document
-        .querySelector(".product-action__price")
-        ?.textContent?.trim(),
-    };
-  }
+
+  window.WhiskyExchangeScraper = WhiskyExchangeScraper;
 }
 
 // Map of site scrapers by domain
-const SCRAPERS = {
-  "totalwine.com": TotalWineScraper,
-  "whiskyshop.com": WhiskyShopScraper,
-  "winelibrary.com": WineLibraryScraper,
-  "wine.com": WineComScraper,
-  "thewhiskyexchange.com": WhiskyExchangeScraper,
-};
+if (!window.SCRAPERS) {
+  window.SCRAPERS = {
+    "totalwine.com": TotalWineScraper,
+    "whiskyshop.com": WhiskyShopScraper,
+    "winelibrary.com": WineLibraryScraper,
+    "wine.com": WineComScraper,
+    "thewhiskyexchange.com": WhiskyExchangeScraper,
+  };
+}
 
 // Main initialization function
 function init() {
@@ -178,76 +211,74 @@ function init() {
 
   // Create scraper instance
   const scraper = new Scraper();
+  console.log("Honey Barrel: Scraper instance created", scraper);
 
   // Execute scraping after the page has fully loaded
-  window.addEventListener("load", async () => {
-    try {
-      // Check if we're on a product page
-      if (!scraper.isProductPage()) {
-        console.log("Honey Barrel: Not a product page, stopping");
-        return;
-      }
+  if (document.readyState === "complete") {
+    console.log("Honey Barrel: Page already loaded, starting scraping...");
+    runScrapingLogic(scraper);
+  } else {
+    window.addEventListener("load", () => {
+      console.log("Honey Barrel: Page loaded, starting scraping...");
+      runScrapingLogic(scraper);
+    });
+  }
 
-      console.log("Honey Barrel: Detected product page, scraping...");
-
-      // Scrape bottle information
-      const bottleInfo = await scraper.scrape();
-
-      if (!bottleInfo) {
-        console.log("Honey Barrel: No bottle information found");
-        return;
-      }
-
-      console.log("Honey Barrel: Scraped bottle info", bottleInfo);
-
-      // Enhance bottle information
-      const enhancedInfo = enhanceBottleInfo(bottleInfo);
-
-      // Send to background script via bridge
-      if (window.honeyBarrelBridge) {
-        window.honeyBarrelBridge
-          .sendMessage({
-            action: "BOTTLE_DETECTED",
-            payload: {
-              bottleInfo: enhancedInfo,
-              source: {
-                url: window.location.href,
-                domain: currentDomain,
-                title: document.title,
-              },
-            },
-          })
-          .then((response) => {
-            console.log("Honey Barrel: Message sent, response:", response);
-          })
-          .catch((err) => {
-            console.error("Honey Barrel: Error sending message:", err);
-          });
-      } else {
-        console.error(
-          "Honey Barrel: Bridge not available for sending messages"
-        );
-      }
-    } catch (error) {
-      console.error("Honey Barrel: Error scraping bottle info", error);
-    }
-  });
-
-  // Set up listener for extension messages
-  window.addEventListener("message", function (event) {
-    // Only accept messages from the same window
-    if (event.source !== window) return;
-
-    // Check if it's a message from the extension
-    if (event.data.type && event.data.type === "FROM_EXTENSION_TO_PAGE") {
-      if (event.data.message && event.data.message.action === "MATCHES_FOUND") {
-        const matchCount = event.data.message.payload.count;
-        if (matchCount > 0) {
-          console.log(`Honey Barrel: ${matchCount} matches found`);
+  function runScrapingLogic(scraper) {
+    (async () => {
+      try {
+        // Check if we're on a product page
+        console.log("Honey Barrel: Checking if product page...");
+        if (!scraper.isProductPage()) {
+          console.log("Honey Barrel: Not a product page, stopping");
+          return;
         }
+
+        console.log("Honey Barrel: Detected product page, scraping...");
+
+        // Scrape bottle information
+        const bottleInfo = await scraper.scrape();
+
+        if (!bottleInfo) {
+          console.log("Honey Barrel: No bottle information found");
+          return;
+        }
+
+        console.log("Honey Barrel: Scraped bottle info", bottleInfo);
+
+        // Enhance bottle information
+        const enhancedInfo = enhanceBottleInfo(bottleInfo);
+
+        // Send to background script via bridge
+        if (window.honeyBarrelBridge) {
+          window.honeyBarrelBridge
+            .sendMessage({
+              action: "BOTTLE_DETECTED",
+              payload: {
+                bottleInfo: enhancedInfo,
+                source: {
+                  url: window.location.href,
+                  domain: getCurrentDomain(),
+                  title: document.title,
+                },
+              },
+            })
+            .then((response) => {
+              console.log("Honey Barrel: Message sent, response:", response);
+            })
+            .catch((err) => {
+              console.error("Honey Barrel: Error sending message:", err);
+            });
+        } else {
+          console.error(
+            "Honey Barrel: Bridge not available for sending messages"
+          );
+        }
+      } catch (error) {
+        console.error("Honey Barrel: Error scraping bottle info", error);
       }
-    }
-  });
+    })();
+  }
 }
 
 function addPopupTrigger() {
@@ -337,6 +368,12 @@ function enhanceBottleInfo(bottleInfo) {
 
   return enhanced;
 }
-
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "REFRESH_SCRAPER") {
+    console.log("Honey Barrel: Refresh button clicked, reinitializing...");
+    init(); // Call the init function
+    sendResponse({ status: "success", message: "Scraper reinitialized" });
+  }
+});
 // Initialize content script
 init();
