@@ -144,7 +144,9 @@ if (!window.WineComScraper) {
     async scrape() {
       return {
         name: document.querySelector(".pipName")?.textContent?.trim(),
-        price: document.querySelector(".pipPriceAmount")?.textContent?.trim(),
+        price: document
+          .querySelector(".productPrice_price-regFractional")
+          ?.textContent?.trim(),
       };
     }
   }
@@ -368,12 +370,20 @@ function enhanceBottleInfo(bottleInfo) {
 
   return enhanced;
 }
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === "REFRESH_SCRAPER") {
-    console.log("Honey Barrel: Refresh button clicked, reinitializing...");
-    init(); // Call the init function
-    sendResponse({ status: "success", message: "Scraper reinitialized" });
-  }
-});
+if (
+  typeof chrome !== "undefined" &&
+  chrome.runtime &&
+  chrome.runtime.onMessage
+) {
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.action === "REFRESH_SCRAPER") {
+      console.log("Honey Barrel: Refresh button clicked, reinitializing...");
+      init(); // Call the init function
+      sendResponse({ status: "success", message: "Scraper reinitialized" });
+    }
+  });
+} else {
+  console.error("Honey Barrel: chrome.runtime is not available");
+}
 // Initialize content script
 init();

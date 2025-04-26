@@ -64,7 +64,7 @@ function handleStateUpdate(state) {
   appState = {
     currentBottle: state.currentBottle,
     matches: state.matches || [],
-    isLoading: state.isLoading,
+    isLoading: false,
     error: state.error,
     lastUpdated: state.lastUpdated,
   };
@@ -75,7 +75,7 @@ function handleStateUpdate(state) {
 // Update the popup UI
 function updateUI() {
   hideAllStates();
-
+  console.log("eshan", appState);
   if (appState.isLoading) {
     showLoadingState();
   } else if (appState.error) {
@@ -279,18 +279,24 @@ function formatTime(date) {
 function refreshListings() {
   console.log("Honey Barrel: Refreshing listings");
   appState.isLoading = true;
-  updateUI();
-
-  chrome.runtime.sendMessage(
-    { action: "REFRESH_LISTINGS", forceRefresh: true },
-    (response) => {
-      if (!response || !response.success) {
-        appState.error = response?.error || "Failed to refresh listings";
-        appState.isLoading = false;
-        updateUI();
-      }
+  // updateUI();
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (tabs[0]?.id) {
+      chrome.tabs.reload(tabs[0].id, () => {
+        console.log("Honey Barrel: Page reloaded");
+      });
     }
-  );
+  });
+  // chrome.runtime.sendMessage(
+  //   { action: "REFRESH_LISTINGS", forceRefresh: true },
+  //   (response) => {
+  //     if (!response || !response.success) {
+  //       appState.error = response?.error || "Failed to refresh listings";
+  //       appState.isLoading = false;
+  //       updateUI();
+  //     }
+  //   }
+  // );
 }
 // import { extractVintageFromName } from "../utils/normalizer.js";
 
