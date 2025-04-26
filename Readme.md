@@ -36,7 +36,7 @@ Enhanced text processing capabilities include:
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/honeybarrel.git
+    git clone https://github.com/Eshan276/honeybarrel.git
     ```
 2. Navigate to the project directory:
     ```bash
