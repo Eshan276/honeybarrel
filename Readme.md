@@ -4,7 +4,10 @@ HoneyBarrel is a Chrome extension designed to [briefly describe the purpose of t
 
 ## Demo Video
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/your-video-id" frameborder="0" allowfullscreen></iframe>
+<video width="560" height="315" controls>
+  <source src="Public\2025-04-27 11-52-56.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ## Features
 
