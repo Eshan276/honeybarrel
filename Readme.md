@@ -2,6 +2,10 @@
 
 HoneyBarrel is a Chrome extension designed to [briefly describe the purpose of the extension].
 
+## Demo Video
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/your-video-id" frameborder="0" allowfullscreen></iframe>
+
 ## Features
 
 ### Multi-Factor Matching
